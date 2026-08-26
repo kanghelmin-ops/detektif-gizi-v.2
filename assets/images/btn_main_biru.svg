@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg" viewBox="0 0 399.9 94.3">
+  <!-- Generator: Adobe Illustrator 30.3.0, SVG Export Plug-In . SVG Version: 2.1.3 Build 182)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #91bffa;
+      }
+
+      .st1 {
+        fill: #ebc49d;
+      }
+
+      .st2 {
+        fill: #f9e9da;
+      }
+
+      .st3 {
+        fill: #4074ae;
+      }
+    </style>
+  </defs>
+  <g id="svg1" sodipodi:docname="btn_main_biru.svg">
+    <sodipodi:namedview id="namedview1" bordercolor="#666666" borderopacity="1.0" inkscape:current-layer="layer1" inkscape:cx="698.18958" inkscape:cy="340.10725" inkscape:deskcolor="#d1d1d1" inkscape:document-units="mm" inkscape:pagecheckerboard="0" inkscape:pageopacity="0.0" inkscape:showpageshadow="2" inkscape:window-height="1017" inkscape:window-maximized="1" inkscape:window-width="1920" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:zoom="1.0570195" pagecolor="#ffffff"/>
+    <g id="layer1" inkscape:groupmode="layer" inkscape:label="Layer 1">
+      <g id="g163">
+        <path id="path164" class="st3" d="M396.7,16.6c-1.5-7.5-9.7-13.3-20-14.4-10.7-1.1-25.6-2.3-41.8-2.3H65.1c-16.2,0-31,1.2-41.8,2.3C12.9,3.3,4.8,9.1,3.3,16.6,1.7,24.4,0,35.2,0,47s1.6,22.6,3.2,30.4c1.5,7.5,9.7,13.3,20,14.4,10.7,1.1,25.6,2.3,41.8,2.3h269.8c16.2,0,31-1.2,41.8-2.3,10.4-1.1,18.5-7,20-14.4,1.6-7.8,3.2-18.6,3.2-30.4s-1.6-22.6-3.2-30.4Z"/>
+        <path id="path165" class="st0" d="M392.4,16.2c-1.4-6.7-9-11.9-18.6-12.9-9.9-1-23.8-2.1-38.8-2.1H65.1c-15,0-28.8,1.1-38.8,2.1-9.6,1-17.2,6.2-18.6,12.9-1.5,7-3,16.6-3,27.2s1.5,20.2,3,27.2c1.4,6.7,9,11.9,18.6,12.9,9.9,1,23.8,2.1,38.8,2.1h269.8c15,0,28.8-1.1,38.8-2.1,9.6-1,17.2-6.2,18.6-12.9,1.5-7,3-16.6,3-27.2s-1.5-20.2-3-27.2Z"/>
+        <path id="path166" class="st3" d="M382.5,20.5c-1.2-5.4-7.5-9.6-15.5-10.4-8.3-.8-19.7-1.7-32.1-1.7H65.1c-12.4,0-23.9.9-32.1,1.7-8,.8-14.3,5-15.5,10.4-1.2,5.6-2.5,13.4-2.5,21.9s1.3,16.3,2.5,21.9c1.2,5.4,7.5,9.6,15.5,10.4,8.3.8,19.7,1.7,32.1,1.7h269.8c12.4,0,23.9-.9,32.1-1.7,8-.8,14.3-5,15.5-10.4,1.2-5.6,2.5-13.4,2.5-21.9,0-8.5-1.2-16.3-2.5-21.9Z"/>
+        <path id="path167" class="st2" d="M382.6,42.3c0,4.7-.4,9.2-1,13.2-.4,2.8-.9,5.5-1.4,7.7-1.1,5.1-7.1,9.1-14.7,9.9-7.9.8-18.7,1.6-30.6,1.6H65.1c-11.8,0-22.7-.8-30.6-1.6-7.6-.8-13.6-4.8-14.7-9.9-.5-2.2-1-4.8-1.4-7.7-.6-4-1-8.5-1-13.2,0-8.1,1.2-15.5,2.4-20.8,1.1-5.1,7.1-9.1,14.7-9.9,7.9-.8,18.7-1.6,30.6-1.6h269.8c11.8,0,22.7.8,30.6,1.6,7.6.8,13.6,4.8,14.7,9.9,1.2,5.3,2.4,12.8,2.4,20.8h0Z"/>
+        <path id="path168" class="st1" d="M381.6,55.5c-.4,2.8-.9,5.5-1.4,7.7-1.1,5.1-7.1,9.1-14.7,9.9-7.9.8-18.7,1.6-30.6,1.6H65.1c-11.8,0-22.7-.8-30.6-1.6-7.6-.8-13.6-4.8-14.7-9.9-.5-2.2-1-4.8-1.4-7.7,9.9,6.9,27.1,11.5,46.6,11.5h269.8c19.6,0,36.8-4.6,46.7-11.5h0Z"/>
+      </g>
+    </g>
+  </g>
+</svg>

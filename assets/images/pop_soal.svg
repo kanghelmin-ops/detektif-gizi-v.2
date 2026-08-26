@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg" viewBox="0 0 1001 611">
+  <!-- Generator: Adobe Illustrator 30.3.0, SVG Export Plug-In . SVG Version: 2.1.3 Build 182)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #773831;
+      }
+
+      .st1 {
+        fill: #dfc28a;
+      }
+
+      .st2 {
+        fill: #5f1e22;
+      }
+
+      .st3 {
+        fill: #6d5f32;
+      }
+    </style>
+  </defs>
+  <g id="svg1" sodipodi:docname="pop_soal.svg">
+    <sodipodi:namedview id="namedview1" bordercolor="#666666" borderopacity="1.0" inkscape:current-layer="svg1" inkscape:cx="416.55781" inkscape:cy="306.59237" inkscape:deskcolor="#d1d1d1" inkscape:document-units="mm" inkscape:pagecheckerboard="0" inkscape:pageopacity="0.0" inkscape:showpageshadow="2" inkscape:window-height="1017" inkscape:window-maximized="1" inkscape:window-width="1920" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:zoom="0.68657938" pagecolor="#ffffff"/>
+    <g id="g2" inkscape:export-filename="pop_soal.svg" inkscape:export-xdpi="100" inkscape:export-ydpi="100">
+      <path id="path704" class="st3" d="M73.7,610.9h-.8c-15.2,0-29.7,0-39.7-5.3-11.1-6-18.8-18.1-20.9-33.3-.4-3.2-.9-6.4-1.3-9.6-2.3-17.1-4.3-31.8-5.6-52.6C2.1,454.3,0,365.6,0,284S1.5,111,9.2,43.1C11.3,25.4,22.4,11,31.8,6.3,42.7.8,59.1,0,73.6,0h856.1c17.7,0,29.9,2.3,38.9,6.8,13.3,7,20.7,17.3,22.4,32,10.9,93.8,13.3,313.2,5.3,469.5-.9,19.2-2.8,37.4-4.1,52.1-.4,4.1-.8,8.1-1.1,11.7-1.7,17.5-10.3,31.2-21.8,34-9.2,2.3-23.7,4.9-39.5,4.9H73.7Z" sodipodi:nodetypes="ccccccsscccccccccccc"/>
+      <path id="path705" class="st1" d="M986.6,38.2c-1.9-15-10.5-22.9-19.9-27.6s-22-6.2-36.9-6.2H73.7c-14.9,0-30.1.9-39.9,5.6-8.8,4.3-18.2,17.5-20.1,32.5C.2,159.9,4,398.5,10,497.2c1.5,23.7,4.1,39.9,6.8,60.2,2.1,14.9,9.8,24.6,18.4,29.1,9,4.7,23.5,4.7,38.4,4.7h856.1c14.9,0,28.6-2.4,38.4-4.7,9.6-2.3,17.1-14.1,18.4-29.1,1.5-15.8,3.9-38.2,5.3-62,8.3-155.7,5.3-368.9-5.1-457.1Z" sodipodi:nodetypes="cccccccscccsccc"/>
+      <path id="path706" class="st0" d="M977.6,97.1c7.5,183.3-1.1,414.6-1.5,422.7-.4,7.9-.9,15-1.5,21.1-1.1,11.7-7,20.7-14.5,22.4-7.7,1.7-18.6,3.6-30.3,3.6H73.7c-11.7,0-22.6-1.9-30.3-3.6-7.5-1.7-13.5-10.9-14.5-22.4-.6-6-1.3-13.2-1.5-21.1-5.8-128.2-6.2-291.6-2.1-423.6.8-26.7,2.4-33.7,3.6-45.7,1.1-11.7,7-20.7,14.5-22.4,7.7-1.7,18.6-3.6,30.3-3.6h856.1c11.7,0,22.6,1.9,30.3,3.6,7.5,1.7,13.5,10.9,14.5,22.4,1.1,11.8,2.3,25,3,46.6h0Z" sodipodi:nodetypes="ccscccccccccccccc"/>
+      <path id="path707" class="st2" d="M976.1,519.6c-.4,7.9-.9,15-1.5,21.1-1.1,11.7-7,20.7-14.5,22.4-7.7,1.7-18.6,3.6-30.3,3.6H73.6c-11.7,0-22.6-1.9-30.3-3.6-7.5-1.7-13.5-10.9-14.5-22.4-.6-6-1.1-13.2-1.5-21.1,9.8,16,26.9,26.5,46.4,26.5h856.1c19.4,0,36.5-10.5,46.3-26.5Z" sodipodi:nodetypes="csccccccscc"/>
+    </g>
+  </g>
+</svg>
