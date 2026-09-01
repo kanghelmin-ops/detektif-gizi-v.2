@@ -220,10 +220,12 @@ html, body {
 #game-viewport {
   position: relative;
   z-index: 10;
-  width: min(100vw, calc(100vh * 16 / 9), 1920px);
+  width: 100%;
+  max-width: calc(100vh * (16 / 9)); /* Mencegah pelebaran berlebih */
+  max-height: 100vh; /* MENCEGAH VERTICAL OVERFLOW DI LAYAR ULTRAWIDE */
   aspect-ratio: 16 / 9;
-  height: auto;
   overflow: hidden;
+  margin: auto; /* Memastikan posisi di tengah grid body */
 }
 
 /* Header Logos & Controls */
@@ -821,9 +823,18 @@ html, body {
     font-size: clamp(10px, 1.6vw, 13px);
   }
 
-  .modal-content {
-    gap: clamp(4px, 1.5vh, 10px);
-  }
+.modal-content {
+  position: absolute;
+  width: 80%;
+  max-height: 85%; /* Mencegah teks menembus gambar background */
+  overflow-y: auto; /* Memunculkan scroll jika teks feedback sangat panjang */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(6px, 1.5vh, 16px);
+  text-align: center;
+  padding: 10px;
+}
 
   .outro-box {
     width: min(80%, 520px);

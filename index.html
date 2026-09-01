@@ -233,6 +233,7 @@
   <script src="./js/scene-manager.js"></script>
   <script src="./js/vo-countdown.js"></script>
   <script src="./js/carousel-controller.js"></script>
+  <script src="./js/landing-controller.js"></script>
   <script>
 
 
@@ -254,7 +255,7 @@
 
     // === CAROUSEL LANDING PAGE (Tujuan Pembelajaran & Misi) ===
    
-    let voOpeningDone = false;
+
     let voInstructionsDone = false;
 
     const carouselController = new CarouselController({
@@ -267,48 +268,13 @@
 });
 
     // Tombol Mulai aktif setelah semua carousel dibaca DAN VO opening selesai
-    function updateStartState() {
-      elements.btnStart.disabled = !(voOpeningDone && carouselController.isComplete());
-    }
+
 
     // Tombol Lanjut (scene petunjuk) aktif setelah VO petunjuk selesai
     function updateContinueState() {
       elements.btnContinue.disabled = !voInstructionsDone;
     }
 
-    function resetLandingFlow() {
-      voOpeningDone = false;
-      carouselController.reset();
-    }
-
-
-    function playOpeningVO() {
-      elements.btnStart.disabled = true;
-      const vo = audioService.voOpening;
-      vo.src = "./assets/audio/vo_opening.mp3";
-      vo.currentTime = 0;
-      audioService.duckBgm();
-      vo.onended = () => audioService.restoreBgm();
-
-      function onPlaying() {
-        vo.removeEventListener('playing', onPlaying);
-        startVoCountdown({
-          audioEl: vo,
-          countdownEl: elements.voCountdown,
-          valueEl: elements.voCountdownValue,
-          onFinish: () => { voOpeningDone = true; updateStartState(); }
-        });
-      }
-      vo.addEventListener('playing', onPlaying);
-      vo.play().catch(() => { finishOpeningCountdown(); });
-    }
-
-    function finishOpeningCountdown() {
-      stopVoCountdown();
-      elements.voCountdown.classList.remove('active');
-      voOpeningDone = true;
-      updateStartState();
-    }
 
     function playInstructionsVO() {
       elements.btnContinue.disabled = true;
@@ -558,12 +524,6 @@
       elements.btnVoCountdownInstructionsClose.addEventListener('click', () => {
         audioService.stopVO(audioService.voInstructions);
         finishInstructionsCountdown();
-      });
-
-      elements.btnStart.addEventListener('click', () => {
-        audioService.stopVO(audioService.voOpening);
-        switchScene(elements.sceneInstructions, 'main');
-        playInstructionsVO();
       });
 
       // Navigasi Carousel di Landing Page
