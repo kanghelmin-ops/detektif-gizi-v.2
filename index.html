@@ -232,6 +232,7 @@
   <script src="./js/dom-elements.js"></script>
   <script src="./js/scene-manager.js"></script>
   <script src="./js/vo-countdown.js"></script>
+  <script src="./js/carousel-controller.js"></script>
   <script>
 
 
@@ -252,14 +253,22 @@
    
 
     // === CAROUSEL LANDING PAGE (Tujuan Pembelajaran & Misi) ===
-    let carouselIndex = 0;
+   
     let voOpeningDone = false;
     let voInstructionsDone = false;
-    const carouselViewed = Array.from(elements.carouselSlides, (_, i) => i === 0);
+
+    const carouselController = new CarouselController({
+  slides: elements.carouselSlides,
+  track: elements.carouselTrack,
+  dots: elements.carouselDots,
+  btnPrev: elements.btnCarouselPrev,
+  btnNext: elements.btnCarouselNext,
+  onUpdate: updateStartState // Callback untuk tombol Start
+});
 
     // Tombol Mulai aktif setelah semua carousel dibaca DAN VO opening selesai
     function updateStartState() {
-      elements.btnStart.disabled = !(voOpeningDone && carouselViewed.every(v => v));
+      elements.btnStart.disabled = !(voOpeningDone && carouselController.isComplete());
     }
 
     // Tombol Lanjut (scene petunjuk) aktif setelah VO petunjuk selesai
@@ -267,31 +276,10 @@
       elements.btnContinue.disabled = !voInstructionsDone;
     }
 
-    function updateCarousel() {
-      if (elements.carouselTrack) {
-        elements.carouselTrack.style.transform = `translateX(-${carouselIndex * 100}%)`;
-      }
-
-      elements.carouselSlides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === carouselIndex);
-      });
-      elements.carouselDots.forEach((dot, i) => {
-        dot.classList.toggle('active', i === carouselIndex);
-      });
-
-      elements.btnCarouselPrev.disabled = carouselIndex === 0;
-      elements.btnCarouselNext.disabled = carouselIndex === elements.carouselSlides.length - 1;
-
-      updateStartState();
-    }
-
-    function resetCarousel() {
-      carouselIndex = 0;
-      for (let i = 0; i < carouselViewed.length; i++) carouselViewed[i] = (i === 0);
+    function resetLandingFlow() {
       voOpeningDone = false;
-      updateCarousel();
+      carouselController.reset();
     }
-
 
 
     function playOpeningVO() {
@@ -580,18 +568,11 @@
 
       // Navigasi Carousel di Landing Page
       elements.btnCarouselNext.addEventListener('click', () => {
-        if (carouselIndex < elements.carouselSlides.length - 1) {
-          carouselIndex++;
-          carouselViewed[carouselIndex] = true;
-          updateCarousel();
-        }
+        carouselController.next();
       });
 
       elements.btnCarouselPrev.addEventListener('click', () => {
-        if (carouselIndex > 0) {
-          carouselIndex--;
-          updateCarousel();
-        }
+        carouselController.prev();
       });
 
       elements.btnContinue.addEventListener('click', () => {
@@ -620,12 +601,12 @@
         loadQuizSession();
       });
 
-  elements.btnExit.addEventListener('click', () => {
-    gameState.resetState();
-    resetCarousel();
-    switchScene(elements.sceneCover, 'main');
-    playOpeningVO();
-  });
+    elements.btnExit.addEventListener('click', () => {
+      gameState.resetState();
+      resetLandingFlow(); // Ini menggunakan fungsi reset baru kita
+      switchScene(elements.sceneCover, 'main');
+      playOpeningVO();
+    });
 
       // Fullscreen Handler
       elements.btnToggleFullscreen.addEventListener('click', () => {
