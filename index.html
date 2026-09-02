@@ -7,7 +7,899 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/style.css">
+  <style>
+    /* ==========================================
+       DESIGN TOKENS - DETEKTIF GIZI
+       ========================================== */
+    :root {
+      /* Color System */
+      --color-bg-light: #e0f7fa;
+      --color-overlay-dark: rgba(0, 0, 0, 0.7);
+      --color-primary: #006064;
+      --color-primary-dark: #004d40;
+      --color-text-main: #2c3e50;
+      --color-text-sub: #37474f;
+      --color-accent-orange: #e65100;
+      --color-accent-green: #2e7d32;
+      --color-accent-red: #d32f2f;
+      --color-white: #ffffff;
+
+      /* Typography (Ukuran disesuaikan agar pas di HP) */
+      --font-family-base: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+      --font-size-xs: clamp(12px, 1.4vw, 18px);
+      --font-size-sm: clamp(14px, 1.6vw, 20px);
+      --font-size-md: clamp(16px, 2vw, 26px);
+      --font-size-lg: clamp(20px, 2.5vw, 32px);
+      --font-size-xl: clamp(26px, 3vw, 38px);
+
+      /* Shadows & Effects */
+      --shadow-title: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+      --shadow-box: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.12));
+      --text-shadow-button: 1px 1px 3px rgba(0, 0, 0, 0.5);
+
+      /* Transitions */
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease-in-out;
+    }
+
+    /* ==========================================
+       UI COMPONENTS - RESPONSIVE BUTTONS
+       ========================================== */
+
+    /* General Image Button Reset */
+    .btn-img {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      outline: none;
+      transition: transform var(--transition-fast);
+    }
+
+    .btn-img:hover:not(:disabled) {
+      transform: scale(1.05);
+    }
+
+    .btn-img:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      filter: grayscale(80%);
+    }
+
+    .btn-img img {
+      width: auto;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Header Action Buttons (Fullscreen & Music) */
+    .btn-control-img {
+      height: clamp(32px, 6vh, 55px);
+    }
+
+    /* Big Action Buttons (Mulai, Lanjut, Ulangi, Keluar) */
+    .btn-action-lg {
+      height: clamp(30px, 6.25vh, 57px);
+    }
+
+    .btn-action-md {
+      height: clamp(38px, 8vh, 70px);
+    }
+
+    /* Quiz Option Button */
+    .btn-option {
+      position: relative;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      height: clamp(36px, 7vh, 70px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      outline: none;
+    }
+
+    .btn-option .bg-img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      z-index: 1;
+      transition: transform var(--transition-fast);
+    }
+
+    .btn-option:hover:not(:disabled) .bg-img {
+      transform: scale(1.02);
+    }
+
+    .btn-option .label {
+      position: relative;
+      z-index: 2;
+      color: #111827;
+      font-size: clamp(11px, 1.3vw, 17px);
+      font-weight: bold;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
+      padding-inline: 6px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Tombol Cek: redup saat belum ada jawaban dipilih */
+    #btn-submit:disabled {
+      opacity: 0.55;
+      filter: grayscale(60%);
+      cursor: not-allowed;
+    }
+
+    /* Modal Popup UI */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--color-overlay-dark);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      position: relative;
+      width: min(62%, 560px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-card .bg-pop {
+      width: 100%;
+      height: auto;
+      max-height: 75vh;
+      object-fit: contain;
+    }
+
+    .modal-content {
+      position: absolute;
+      width: 80%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(6px, 1.5vh, 16px);
+      text-align: center;
+      padding: 10px;
+    }
+
+    .modal-title {
+      font-size: var(--font-size-lg); /* Atau bisa set langsung, misal: font-size: 1.8rem; */
+      font-weight: 800;
+    }
+
+    .modal-text {
+      font-size: var(--font-size-md); /* Atau bisa set langsung, misal: font-size: 1.2rem; */
+      line-height: 1.4;
+    }
+
+    /* ==========================================
+       MAIN STYLE
+       ========================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: var(--font-family-base);
+      user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--color-bg-light);
+      display: grid;
+      place-items: center;
+    }
+
+    /* Background Layer */
+    #bg-wrapper {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .bg-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity var(--transition-normal);
+    }
+
+    .bg-image.active {
+      opacity: 1;
+    }
+
+    /* Game Viewport Container (Fixed 16:9 Aspect Ratio) */
+    #game-viewport {
+      position: relative;
+      z-index: 10;
+      width: min(100vw, calc(100vh * 16 / 9), 1920px);
+      aspect-ratio: 16 / 9;
+      height: auto;
+      overflow: hidden;
+    }
+
+    /* Header Logos & Controls */
+    .global-logo {
+      position: absolute;
+      top: clamp(10px, 3vh, 25px);
+      left: clamp(15px, 3vw, 35px);
+      z-index: 90;
+    }
+
+    .global-logo img {
+      height: clamp(30px, 6vh, 65px);
+      width: auto;
+      object-fit: contain;
+    }
+
+    .global-controls {
+      position: absolute;
+      top: clamp(10px, 3vh, 25px);
+      right: clamp(15px, 3vw, 35px);
+      z-index: 100;
+      display: flex;
+      gap: clamp(8px, 1.5vw, 15px);
+    }
+
+    /* Scene Core Architecture */
+    .scene {
+      position: absolute;
+      inset: 0;
+      display: none;
+      z-index: 10;
+    }
+
+    .scene.active {
+      display: flex;
+    }
+
+    /* --- SCENE 1: COVER --- */
+    #scene-cover {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(14px, 3.5vh, 30px);
+      padding: 20px;
+    }
+
+    .title-asset {
+      max-width: 750px;
+      width: 70%;
+      max-height: 25vh;
+      object-fit: contain;
+      filter: var(--shadow-title);
+    }
+
+    /* Carousel Tujuan Pembelajaran & Misi di Landing Page */
+    .cover-carousel {
+      position: relative;
+      width: min(92%, 96vh);
+      aspect-ratio: 768 / 277;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cover-carousel > img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .cover-carousel-content {
+      position: absolute;
+      width: 82%;
+      height: 80%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(3px, 0.7vh, 7px);
+      color: var(--color-text-main);
+    }
+
+    /* Countdown VO Opening */
+    .vo-countdown {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(28px, 5vh, 48px);
+      height: clamp(28px, 5vh, 48px);
+      background: var(--color-accent-orange);
+      color: var(--color-white);
+      border-radius: 50%;
+      box-shadow: var(--shadow-box);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--transition-fast);
+    }
+
+    .vo-countdown.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #vo-countdown-value {
+      font-size: var(--font-size-md);
+      font-weight: 900;
+      line-height: 1;
+      min-width: 2ch;
+      text-align: center;
+      text-shadow: var(--text-shadow-button);
+    }
+
+    .vo-countdown-close {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: clamp(14px, 2.5vh, 24px);
+      height: clamp(14px, 2.5vh, 24px);
+      border: none;
+      border-radius: 50%;
+      background: var(--color-accent-red);
+      color: var(--color-white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px;
+      box-shadow: var(--shadow-box);
+      transition: transform var(--transition-fast);
+    }
+
+    .vo-countdown-close:hover {
+      transform: scale(1.1);
+    }
+
+    /* --- SCENE 2: INSTRUCTIONS --- */
+    #scene-instructions {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(10px, 2vh, 18px);
+      padding: 15px;
+    }
+    .instructions-box {
+      position: relative;
+      width: min(94%, 1150px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .instructions-box img {
+      width: 100%;
+      height: auto;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+
+    .instructions-text {
+      position: absolute;
+      width: 80%;
+      height: 74%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(6px, 1.2vh, 12px);
+      color: var(--color-text-main);
+    }
+
+    /* Carousel Petunjuk (Tujuan Pembelajaran & Misi) */
+    .carousel-viewport {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .carousel-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform var(--transition-normal);
+    }
+
+    .carousel-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(4px, 0.9vh, 10px);
+      padding: 0 clamp(6px, 1.5vw, 16px);
+    }
+
+    .carousel-slide h2 {
+      font-size: clamp(14px, 3.2vh, 28px);
+      color: var(--color-primary);
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .carousel-slide ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(3px, 0.8vh, 9px);
+    }
+
+    .carousel-slide li {
+      font-size: clamp(11px, 2.5vh, 20px);
+      line-height: 1.3;
+      font-weight: 600;
+    }
+
+    /* Teks Scene Petunjuk (di luar carousel) */
+    .instructions-text h2 {
+      font-size: var(--font-size-xl);
+      color: var(--color-primary);
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .instructions-text ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(6px, 1.4vh, 14px);
+    }
+
+    .instructions-text li {
+      font-size: var(--font-size-md);
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    .carousel-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(10px, 2vw, 22px);
+      margin-top: auto;
+    }
+
+    .carousel-arrow {
+      width: clamp(24px, 4.5vh, 44px);
+      height: clamp(24px, 4.5vh, 44px);
+      border: none;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: var(--color-white);
+      font-size: clamp(15px, 3vh, 26px);
+      font-weight: 900;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-box);
+      transition: transform var(--transition-fast);
+      padding-bottom: 3px;
+    }
+
+    .carousel-arrow:hover:not(:disabled) {
+      transform: scale(1.08);
+    }
+
+    .carousel-arrow:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .carousel-dots {
+      display: flex;
+      gap: clamp(6px, 1vw, 10px);
+    }
+
+    .carousel-dots .dot {
+      width: clamp(10px, 1.8vh, 16px);
+      height: clamp(10px, 1.8vh, 16px);
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.2);
+      transition: background var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .carousel-dots .dot.active {
+      background: var(--color-accent-orange);
+      transform: scale(1.15);
+    }
+
+    /* --- SCENE 3: MAIN ARENA --- */
+    #scene-main {
+      flex-direction: column;
+      padding: clamp(15px, 3vh, 25px) clamp(25px, 5vw, 60px);
+      justify-content: space-between;
+    }
+
+    .arena-header {
+      display: flex;
+      justify-content: flex-start; /* Skor berada di kiri atas arena */
+      align-items: center;
+      width: 100%;
+      padding-left: clamp(90px, 12vw, 220px); /* Menghindari tumpang tindih dengan logo Kemendikdasmen */
+      z-index: 80;
+    }
+
+    .session-title {
+      font-size: var(--font-size-md);
+      color: var(--color-primary);
+      font-weight: bold;
+    }
+
+    .score-badge {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score-badge img {
+      height: clamp(30px, 6vh, 55px); /* Diperkecil agar tidak menutupi pop-up soal */
+      width: auto;
+    }
+
+    .score-value {
+      position: absolute;
+      right: 20%;
+      font-size: var(--font-size-sm);
+      font-weight: 900;
+      color: #111827;
+    }
+
+    .question-container {
+      position: relative;
+      width: min(95%, 1200px);
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .question-container img {
+      width: 100%;
+      height: auto;
+      max-height: 42vh;
+      object-fit: contain;
+    }
+
+    .question-content {
+      position: absolute;
+      width: 88%;
+      height: 88%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly; /* Menyebar rapi: Title -> Text -> Image */
+      padding: 5px 15px;
+    }
+
+    .session-title {
+      font-size: var(--font-size-sm);
+      color: #0b1d33;
+      font-weight: 800;
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    .question-text {
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      color: #0b1d33;
+      text-align: center;
+    }
+
+    .food-image-wrapper {
+      height: clamp(70px, 18vh, 180px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .food-image-wrapper img {
+      height: 100%;
+      max-width: 80%;
+      object-fit: contain;
+    }
+
+    /* Grid Tombol Pilihan */
+    .options-panel {
+      width: min(98%, 1400px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(6px, 1vw, 15px);
+    }
+
+    /* --- SCENE 4: OUTRO --- */
+    #scene-outro {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      gap: 5px;
+    }
+
+    .outro-box {
+      position: relative;
+      width: min(75%, 650px); /*Ukuran popup */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .outro-box img {
+      width: 100%;
+      height: auto;
+      max-height: 40vh; /*Ukuran popup */
+      object-fit: contain;
+    }
+
+    .outro-content {
+      position: absolute;
+      width: 58%;
+      top: 60%;
+      left: 50%;  /* Ubah % ini jika ingin geser ke KIRI atau KANAN */
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(4px, 1.2vh, 10px);
+      text-align: center;
+    }
+
+    .outro-title {
+      color: var(--color-primary-dark);
+      font-size: clamp(17px, 2.1vw, 27px);
+      font-weight: 900;
+      line-height: 1.15;
+      text-align: center;
+    }
+
+    .outro-desc {
+      color: var(--color-text-sub);
+      font-size: var(--font-size-sm);
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .outro-score {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: clamp(5px, 1vw, 10px);
+    }
+
+    .outro-score-label {
+      font-weight: bold;
+      color: var(--color-primary-dark);
+      font-size: var(--font-size-sm);
+    }
+
+    .outro-score-val {
+      font-size: var(--font-size-xl);
+      color: var(--color-accent-orange);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .outro-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(10px, 2.5vw, 25px);
+      margin-top: 0px;
+    }
+
+    .outro-actions .btn-action-md {
+      height: clamp(32px, 7.5vh, 55px); /* Ukuran diposisikan presisi agar pas di layar HP */
+    }
+
+    /* Device Rotation Overlay Guard */
+    #rotate-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      z-index: 99999;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    @media screen and (max-width: 900px) and (orientation: portrait) {
+      #rotate-overlay {
+        display: flex;
+      }
+    }
+
+    /* ==========================================
+       RESPONSIVE LANDSCAPE TUNING
+       Maksimalkan tampilan landscape di semua ukuran gadget
+       ========================================== */
+
+    /* Layar pendek (HP landscape, tinggi 360-480px) */
+    @media screen and (orientation: landscape) and (max-height: 480px) {
+      #scene-cover {
+        gap: clamp(4px, 1.8vh, 12px);
+        padding: 10px;
+      }
+
+      .title-asset {
+        max-height: 20vh;
+      }
+
+      .cover-carousel {
+        width: min(92%, 92vh);
+      }
+
+      .cover-carousel-content {
+        height: 82%;
+      }
+
+      .carousel-arrow {
+        width: clamp(22px, 4.5vh, 34px);
+        height: clamp(22px, 4.5vh, 34px);
+        font-size: clamp(14px, 3vh, 22px);
+      }
+
+      .btn-action-lg {
+        height: clamp(24px, 6.25vh, 35px);
+      }
+
+      .btn-action-md {
+        height: clamp(30px, 9vh, 45px);
+      }
+
+      .instructions-box img {
+        max-height: 64vh;
+      }
+
+      .instructions-text {
+        height: 72%;
+      }
+
+      .instructions-text h2 {
+        font-size: clamp(16px, 2.8vw, 24px);
+      }
+
+      .instructions-text li {
+        font-size: clamp(12px, 2vw, 17px);
+      }
+
+      #scene-main {
+        padding: clamp(6px, 2.5vh, 14px) clamp(12px, 4vw, 30px);
+      }
+
+      .score-badge img {
+        height: clamp(24px, 6vh, 38px);
+      }
+
+      .score-value {
+        right: 18%;
+        font-size: clamp(10px, 1.6vw, 13px);
+      }
+
+      .question-container img {
+        max-height: 38vh;
+      }
+
+      .session-title {
+        font-size: clamp(12px, 2.2vw, 16px);
+      }
+
+      .question-text {
+        font-size: clamp(10px, 1.8vw, 14px);
+      }
+
+      .food-image-wrapper {
+        height: clamp(45px, 16vh, 90px);
+      }
+
+      .options-panel {
+        gap: clamp(4px, 1vw, 8px);
+      }
+
+      .btn-option {
+        height: clamp(28px, 8vh, 45px);
+      }
+
+      .btn-option .label {
+        font-size: clamp(10px, 1.6vw, 13px);
+      }
+
+      .modal-content {
+        gap: clamp(4px, 1.5vh, 10px);
+      }
+
+      .outro-box {
+        width: min(80%, 520px);
+      }
+
+      .outro-content {
+        width: 62%;
+        gap: clamp(2px, 1vh, 6px);
+      }
+
+      .outro-box img {
+        max-height: 38vh;
+      }
+    }
+
+    /* Layar sangat pendek (HP landscape, tinggi < 360px) */
+    @media screen and (orientation: landscape) and (max-height: 360px) {
+      .title-asset {
+        max-height: 16vh;
+      }
+
+      .cover-carousel {
+        width: min(94%, 94vh);
+      }
+
+      .cover-carousel-content {
+        height: 84%;
+      }
+
+      .btn-action-lg {
+        height: clamp(21px, 6.25vh, 30px);
+      }
+
+      .btn-action-md {
+        height: clamp(26px, 8vh, 38px);
+      }
+
+      .btn-control-img {
+        height: clamp(24px, 6vh, 32px);
+      }
+
+      .global-logo img {
+        height: clamp(22px, 6vh, 32px);
+      }
+
+      .food-image-wrapper {
+        height: clamp(36px, 15vh, 55px);
+      }
+
+      .question-container img {
+        max-height: 34vh;
+      }
+
+      .btn-option {
+        height: clamp(24px, 7vh, 34px);
+      }
+
+      .btn-option .label {
+        font-size: clamp(9px, 1.5vw, 12px);
+      }
+
+      .score-badge img {
+        height: clamp(20px, 5.5vh, 30px);
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -140,8 +1032,8 @@
         <div class="question-container">
             <img src="./assets/images/pop_soal.svg" alt="Latar Soal">
             <div class="question-content">
-            <h2 id="session-title" class="session-title">Sesi Kuis 1: Tempe Goreng</h2>
-            <p id="question-text-dynamic" class="question-text">Apa kandungan pada makanan ini?</p>
+            <h2 id="session-title" class="session-title">Kuis 1: Tempe</h2>
+            <p id="question-text-dynamic" class="question-text">Apa kandungan gizi pada makanan ini?</p>
             <div class="food-image-wrapper">
                 <img id="asset-food-image" src="./assets/images/soal_1.svg" alt="Gambar Soal">
             </div>
@@ -226,23 +1118,419 @@
 
   </main>
 
-  <script src="./js/data/quiz-data.js"></script>
-  <script src="./js/audio-controller.js"></script>
-  <script src="./js/game-state.js"></script>
-  <script src="./js/dom-elements.js"></script>
-  <script src="./js/scene-manager.js"></script>
-  <script src="./js/vo-countdown.js"></script>
-  <script src="./js/carousel-controller.js"></script>
-  <script src="./js/landing-controller.js"></script>
   <script>
+    /* ==========================================
+       DATA - DATABASE SOAL KUIS DETEKTIF GIZI
+       ========================================== */
+    const quizData = [
+      {
+        id: 1,
+        sessionName: "Kuis 1: Tempe",
+        foodName: "Tempe Goreng",
+        questionText: "Apa kandungan gizi pada makanan ini?",
+        questionVo: "./assets/audio/vo_soal-1.mp3",
+        correctKeys: ["protein", "lemak", "makanan-sehat"],
+        feedbackCorrect: "Luar biasa tepat! Tempe kaya akan Protein nabati dan Lemak baik, serta tergolong Makanan Sehat untuk tubuhmu!",
+        wrongNotifications: {
+          "karbohidrat": "Tempe bukan sumber karbohidrat utama, Detektif!",
+          "serat": "Tempe yang sudah diolah bukan sumber serat utama ya!",
+          "mineral-air-vitamin": "Tempe bukan kelompok makanan kaya air atau vitamin!",
+          "makanan-tidak-sehat": "Wah, tempe adalah makanan sehat bergizi tinggi!"
+        },
+        wrongVo: {
+          "karbohidrat": "./assets/audio/vo_salah_tempe_karbo.mp3",
+          "serat": "./assets/audio/vo_salah_tempe_serat.mp3",
+          "mineral-air-vitamin": "./assets/audio/vo_salah_tempe_mineral.mp3",
+          "makanan-tidak-sehat": "./assets/audio/vo_salah_tempe_makanan.mp3"
+        },
+        feedbackVoCorrect: "./assets/audio/vo_benar_tempe.mp3"
+      },
+      {
+        id: 2,
+        sessionName: "Kuis 2: Permen & Snack",
+        foodName: "Permen & Snack",
+        questionText: "Hmm.. Makanan ini mengandung gizi apa aja ya?",
+        questionVo: "./assets/audio/vo_soal-2.mp3",
+        correctKeys: ["karbohidrat", "lemak", "makanan-tidak-sehat"],
+        feedbackCorrect: "Hebat! Jajanan ini tinggi Karbohidrat sederhana dan Lemak, serta tergolong Makanan Tidak Sehat jika dikonsumsi berlebihan!",
+        wrongNotifications: {
+          "protein": "Permen dan cokelat sama sekali tidak mengandung protein!",
+          "serat": "Camilan manis ini tidak punya kandungan serat yang baik!",
+          "mineral-air-vitamin": "Jajanan ini bukan sumber vitamin atau mineral alami!",
+          "makanan-sehat": "Ups, camilan manis ini termasuk makanan tidak sehat jika dikonsumsi berlebihan!"
+        },
+        wrongVo: {
+          "protein": "./assets/audio/vo_salah_permen_protein.mp3",
+          "serat": "./assets/audio/vo_salah_permen_serat.mp3",
+          "mineral-air-vitamin": "./assets/audio/vo_salah_permen_mineral.mp3",
+          "makanan-sehat": "./assets/audio/vo_salah_permen_makanan.mp3"
+        },
+        feedbackVoCorrect: "./assets/audio/vo_benar_permen.mp3"
+      },
+      {
+        id: 3,
+        sessionName: "Kuis 3: Brokoli & Tomat",
+        foodName: "Brokoli & Tomat",
+        questionText: "Coba kamu tebak dari gizi makanan ini apa aja?",
+        questionVo: "./assets/audio/vo_soal-3.mp3",
+        correctKeys: ["mineral-air-vitamin", "serat", "makanan-sehat"],
+        feedbackCorrect: "Kerja bagus! Sayur dan buah ini kaya Mineral/Vitamin/Air serta Serat, dan pastinya merupakan Makanan Sehat!",
+        wrongNotifications: {
+          "karbohidrat": "Sayur dan buah segar bukan kelompok makanan sumber karbohidrat!",
+          "protein": "Tomat dan brokoli tidak mengandung protein, ya!",
+          "lemak": "Sayuran segar ini bebas dari kandungan lemak!",
+          "makanan-tidak-sehat": "Salah besar, tomat dan brokoli adalah contoh makanan sehat!"
+        },
+        wrongVo: {
+          "karbohidrat": "./assets/audio/vo_salah_brokoli_karbo.mp3",
+          "protein": "./assets/audio/vo_salah_brokoli_protein.mp3",
+          "lemak": "./assets/audio/vo_salah_brokoli_lemak.mp3",
+          "makanan-tidak-sehat": "./assets/audio/vo_salah_brokoli_makanan.mp3"
+        },
+        feedbackVoCorrect: "./assets/audio/vo_benar_brokoli.mp3"
+      },
+      {
+        id: 4,
+        sessionName: "Kuis 4: Mie Instan",
+        foodName: "Mie Instan",
+        questionText: "Apa kandungan gizi pada makanan ini?",
+        questionVo: "./assets/audio/vo_soal-1.mp3",
+        correctKeys: ["karbohidrat", "lemak", "makanan-tidak-sehat"],
+        feedbackCorrect: "Tepat sekali! Mie instan mengandung tinggi Karbohidrat dan Lemak (dari proses pabrik & minyak bumbu), serta termasuk Makanan Tidak Sehat!",
+        wrongNotifications: {
+          "protein": "Mie instan kemasan bukan sumber protein yang baik!",
+          "serat": "Mie instan tidak memiliki kandungan serat yang cukup!",
+          "mineral-air-vitamin": "Mie instan tidak kaya akan vitamin atau mineral alami!",
+          "makanan-sehat": "Hati-hati, mie instan termasuk makanan tidak sehat karena tinggi kandungan natrium dan lemak jenuh!"
+        },
+        wrongVo: {
+          "protein": "./assets/audio/vo_salah_mi instan_protein.mp3",
+          "serat": "./assets/audio/vo_salah_mi instan_serat.mp3",
+          "mineral-air-vitamin": "./assets/audio/vo_salah_mi instan_mineral.mp3",
+          "makanan-sehat": "./assets/audio/vo_salah_mi instan_makanan.mp3"
+        },
+        feedbackVoCorrect: "./assets/audio/vo_benar_mi instan.mp3"
+      },
+      {
+        id: 5,
+        sessionName: "Kuis 5: Ayam Goreng",
+        foodName: "Ayam Goreng",
+        questionText: "Hmm.. Makanan ini mengandung gizi apa aja ya?",
+        questionVo: "./assets/audio/vo_soal-2.mp3",
+        correctKeys: ["protein", "lemak", "makanan-sehat"],
+        feedbackCorrect: "Benar! Ayam goreng kaya Protein dan mengandung Lemak dari proses penggorengan, serta tetap menjadi Makanan Sehat sebagai sumber tenaga dan zat pembangun!",
+        wrongNotifications: {
+          "karbohidrat": "Daging ayam bukan sumber karbohidrat!",
+          "serat": "Ayam goreng tidak mengandung serat sama sekali!",
+          "mineral-air-vitamin": "Ayam goreng bukan kelompok makanan sumber vitamin atau mineral!",
+          "makanan-tidak-sehat": "Ayam goreng tetap lauk makanan sehat bergizi, asal tidak berlebihan!"
+        },
+        wrongVo: {
+          "karbohidrat": "./assets/audio/vo_salah_ayam_karbo.mp3",
+          "serat": "./assets/audio/vo_salah_ayam_serat.mp3",
+          "mineral-air-vitamin": "./assets/audio/vo_salah_ayam_mineral.mp3",
+          "makanan-tidak-sehat": "./assets/audio/vo_salah_ayam_makanan.mp3"
+        },
+        feedbackVoCorrect: "./assets/audio/vo_benar_ayam.mp3"
+      },
+      {
+        id: 6,
+        sessionName: "Kuis 6: Minuman Serbuk & Sirup",
+        foodName: "Minuman Serbuk & Sirup",
+        questionText: "Coba kamu tebak gizi dari makanan ini apa aja?",
+        questionVo: "./assets/audio/vo_soal-3.mp3",
+        correctKeys: ["karbohidrat", "mineral-air-vitamin", "makanan-tidak-sehat"],
+        feedbackCorrect: "Pintar! Sirup tinggi kandungan Karbohidrat (gula) dan Mineral/Vitamin/Air (cairan manis), serta masuk kategori Makanan Tidak Sehat!",
+        wrongNotifications: {
+          "protein": "Minuman sirup sama sekali tidak mengandung protein!",
+          "lemak": "Sirup manis tidak mengandung lemak!",
+          "serat": "Minuman sirup buatan pabrik tidak ada seratnya!",
+          "makanan-sehat": "Minuman tinggi gula ini termasuk makanan/minuman tidak sehat!"
+        },
+        wrongVo: {
+          "protein": "./assets/audio/vo_salah_minuman sirup_protein.mp3",
+          "lemak": "./assets/audio/vo_salah_minuman sirup_lemak.mp3",
+          "serat": "./assets/audio/vo_salah_minuman sirup_serat.mp3",
+          "makanan-sehat": "./assets/audio/vo_salah_minuman sirup_makanan.mp3"
+        },
+        feedbackVoCorrect: "./assets/audio/vo_benar_minuman sirup.mp3"
+      },
+      {
+        id: 7,
+        sessionName: "Kuis 7: Telur Rebus",
+        foodName: "Telur Rebus",
+        questionText: "Apa kandungan gizi pada makanan ini?",
+        questionVo: "./assets/audio/vo_soal-1.mp3",
+        correctKeys: ["protein", "lemak", "makanan-sehat"],
+        feedbackCorrect: "Keren! Telur rebus adalah sumber Protein dan Lemak yang sangat baik, serta tergolong Makanan Sehat!",
+        wrongNotifications: {
+          "karbohidrat": "Telur rebus tidak mengandung zat karbohidrat!",
+          "serat": "Telur bukan kelompok makanan berserat!",
+          "mineral-air-vitamin": "Telur bukan sumber utama vitamin atau air!",
+          "makanan-tidak-sehat": "Telur rebus adalah salah satu contoh makanan sehat!"
+        },
+        wrongVo: {
+          "karbohidrat": "./assets/audio/vo_salah_telur_karbo.mp3",
+          "serat": "./assets/audio/vo_salah_telur_serat.mp3",
+          "mineral-air-vitamin": "./assets/audio/vo_salah_telur_mineral.mp3",
+          "makanan-tidak-sehat": "./assets/audio/vo_salah_telur_makanan.mp3"
+        },
+        feedbackVoCorrect: "./assets/audio/vo_benar_telur.mp3"
+      },
+      {
+        id: 8,
+        sessionName: "Kuis 8: Mie Bakso",
+        foodName: "Mie Bakso",
+        questionText: "Hmm.. Makanan ini gizi mengandung apa aja ya?",
+        questionVo: "./assets/audio/vo_soal-2.mp3",
+        correctKeys: ["karbohidrat", "protein", "makanan-tidak-sehat"],
+        feedbackCorrect: "Hebat! Mie bakso memiliki Karbohidrat dari mie dan Protein dari daging, namun tergolong Makanan Tidak Sehat jika sering dikonsumsi karena tinggi garam dan lemak!",
+        wrongNotifications: {
+          "lemak": "Lemak memang ada di kuahnya, tapi fokus gizi utamanya adalah karbohidrat dan protein!",
+          "serat": "Semangkuk mie bakso standar hampir tidak memiliki kandungan serat!",
+          "mineral-air-vitamin": "Mie bakso bukan kelompok makanan sumber vitamin atau mineral!",
+          "makanan-sehat": "Meskipun mengenyangkan, mie bakso termasuk makanan tidak sehat jika dikonsumsi terlalu sering karena tinggi garam dan lemak!"
+        },
+        wrongVo: {
+          "lemak": "./assets/audio/vo_salah_bakso_lemak.mp3",
+          "serat": "./assets/audio/vo_salah_bakso_serat.mp3",
+          "mineral-air-vitamin": "./assets/audio/vo_salah_bakso_mineral.mp3",
+          "makanan-sehat": "./assets/audio/vo_salah_bakso_makanan.mp3"
+        },
+        feedbackVoCorrect: "./assets/audio/vo_benar_bakso.mp3"
+      },
+      {
+        id: 9,
+        sessionName: "Kuis 9: Susu",
+        foodName: "Susu",
+        questionText: "Coba kamu tebak gizi dari makanan ini apa aja?",
+        questionVo: "./assets/audio/vo_soal-3.mp3",
+        correctKeys: ["protein", "lemak", "makanan-sehat"],
+        feedbackCorrect: "Luar biasa! Susu kaya akan Protein dan Lemak alami yang baik untuk pertumbuhan, serta merupakan Makanan Sehat penguat tulang!",
+        wrongNotifications: {
+          "karbohidrat": "Susu murni tidak mengandung karbohidrat!",
+          "serat": "Susu sama sekali tidak memiliki kandungan serat!",
+          "mineral-air-vitamin": "Meskipun ada kalsium, fokus utama gizi makro susu murni adalah protein dan lemak!",
+          "makanan-tidak-sehat": "Susu adalah minuman sehat penguat tulang!"
+        },
+        wrongVo: {
+          "karbohidrat": "./assets/audio/vo_salah_susu_karbo.mp3",
+          "serat": "./assets/audio/vo_salah_susu_serat.mp3",
+          "mineral-air-vitamin": "./assets/audio/vo_salah_susu_mineral.mp3",
+          "makanan-tidak-sehat": "./assets/audio/vo_salah_susu_makanan.mp3"
+        },
+        feedbackVoCorrect: "./assets/audio/vo_benar_susu.mp3"
+      },
+      {
+        id: 10,
+        sessionName: "Kuis 10: Buah Jeruk & Pisang",
+        foodName: "Buah Jeruk & Pisang",
+        questionText: "Apa kandungan gizi pada makanan ini?",
+        questionVo: "./assets/audio/vo_soal-1.mp3",
+        correctKeys: ["mineral-air-vitamin", "serat", "makanan-sehat"],
+        feedbackCorrect: "Sempurna! Buah segar kaya akan Mineral/Vitamin/Air serta Serat, dan merupakan contoh Makanan Sehat terbaik!",
+        wrongNotifications: {
+          "karbohidrat": "Buah segar bukan kelompok makanan sumber karbohidrat utama!",
+          "protein": "Jeruk dan pisang tidak mengandung protein!",
+          "lemak": "Buah-buahan segar bebas dari kandungan lemak!",
+          "makanan-tidak-sehat": "Salah! Jeruk dan pisang adalah makanan sehat yang kaya manfaat."
+        },
+        wrongVo: {
+          "karbohidrat": "./assets/audio/vo_salah_buah_karbo.mp3",
+          "protein": "./assets/audio/vo_salah_buah_protein.mp3",
+          "lemak": "./assets/audio/vo_salah_buah_lemak.mp3",
+          "makanan-tidak-sehat": "./assets/audio/vo_salah_buah_makanan.mp3"
+        },
+        feedbackVoCorrect: "./assets/audio/vo_benar_buah.mp3"
+      }
+    ];
 
+    /* ==========================================
+       GAME STATE MANAGEMENT
+       ========================================== */
+    class GameState {
+      constructor() {
+        this.resetState();
+      }
 
+      resetState() {
+        this.currentIndex = 0;
+        this.score = 0;
+        this.selectedAnswers = [];
+        this.isMusicMuted = false;
+        this.hasBgmStarted = false;
+      }
 
+      // Answer operations
+      toggleAnswer(answerKey) {
+        const index = this.selectedAnswers.indexOf(answerKey);
+        if (index > -1) {
+          this.selectedAnswers.splice(index, 1);
+          return false; // state removed
+        } else {
+          this.selectedAnswers.push(answerKey);
+          return true; // state added
+        }
+      }
+
+      clearAnswers() {
+        this.selectedAnswers = [];
+      }
+
+      addScore(points = 10) {
+        this.score += points;
+      }
+    }
+
+    const gameState = new GameState();
+
+    /* ==========================================
+       AUDIO CONTROLLER SERVICE
+       ========================================== */
+    class AudioController {
+      constructor() {
+        this.bgm = document.getElementById('audio-bgm');
+        this.sfxHover = document.getElementById('audio-sfx-hover');
+        this.sfxClick = document.getElementById('audio-sfx-click');
+        this.sfxCorrect = document.getElementById('audio-sfx-correct');
+        this.sfxWrong = document.getElementById('audio-sfx-wrong');
+        this.sfxVictory = document.getElementById('audio-sfx-victory');
+        this.voQuestion = document.getElementById('audio-vo-question');
+        this.voFeedback = document.getElementById('audio-vo-feedback');
+        this.voInstructions = document.getElementById('audio-vo-instructions');
+        this.voClosing = document.getElementById('audio-vo-closing');
+        this.voOpening = document.getElementById('audio-vo-opening');
+        this.bgmNormalVolume = 0.08;
+        this.bgmDuckedVolume = 0.03;
+        this.muted = false;
+      }
+
+      isAnyVoPlaying() {
+        return [this.voOpening, this.voInstructions, this.voQuestion, this.voFeedback, this.voClosing]
+          .some(el => el && !el.paused && el.currentTime > 0);
+      }
+
+      duckBgm() {
+        if (this.bgm && !this.muted && !this.bgm.paused) {
+          this.bgm.volume = this.bgmDuckedVolume;
+        }
+      }
+
+      restoreBgm() {
+        if (this.bgm && !this.muted && !this.bgm.paused) {
+          this.bgm.volume = this.bgmNormalVolume;
+        }
+      }
+
+      playSfx(type) {
+        const sfxMap = {
+          hover: { el: this.sfxHover, vol: 0.3 },
+          click: { el: this.sfxClick, vol: 0.4 },
+          correct: { el: this.sfxCorrect, vol: 0.6 },
+          wrong: { el: this.sfxWrong, vol: 0.6 },
+          victory: { el: this.sfxVictory, vol: 0.5 }
+        };
+
+        const target = sfxMap[type];
+        if (target && target.el) {
+          target.el.currentTime = 0;
+          target.el.volume = target.vol;
+          target.el.play().catch(() => {});
+        }
+      }
+
+      playBgm() {
+        if (this.bgm) {
+          this.bgm.volume = this.bgmNormalVolume;
+          this.bgm.play().catch(() => {});
+          if (this.isAnyVoPlaying()) {
+            this.bgm.volume = this.bgmDuckedVolume;
+          }
+        }
+      }
+
+      pauseBgm() {
+        if (this.bgm) this.bgm.pause();
+      }
+
+      playVO(element, sourcePath) {
+        if (element && sourcePath) {
+          element.src = sourcePath;
+          element.currentTime = 0;
+          element.onended = () => this.restoreBgm();
+          element.play().catch(() => {});
+          this.duckBgm();
+        }
+      }
+
+      stopVO(element) {
+        if (element) {
+          element.pause();
+          element.currentTime = 0;
+        }
+        this.restoreBgm();
+      }
+    }
+
+    const audioService = new AudioController();
 
     /* ==========================================
        APP - GAME LOGIC
        ========================================== */
-    
+    // === DOM ELEMENTS SELECTION ===
+    const elements = {
+      // Scenes
+      sceneCover: document.getElementById('scene-cover'),
+      sceneInstructions: document.getElementById('scene-instructions'),
+      sceneMain: document.getElementById('scene-main'),
+      sceneOutro: document.getElementById('scene-outro'),
+
+      // Backgrounds
+      bgMain: document.getElementById('asset-main-bg'),
+      bgOutro: document.getElementById('asset-outro-bg'),
+
+      // Controls & Display
+      btnStart: document.getElementById('btn-start'),
+      btnContinue: document.getElementById('btn-continue-game'),
+      btnSubmit: document.getElementById('btn-submit'),
+      btnRestart: document.getElementById('btn-restart'),
+      btnExit: document.getElementById('btn-exit'),
+      btnToggleMusic: document.getElementById('btn-toggle-music'),
+      btnToggleFullscreen: document.getElementById('btn-toggle-fullscreen'),
+      assetBtnMusic: document.getElementById('asset-btn-music'),
+
+      // VO Opening Countdown
+      voCountdown: document.getElementById('vo-countdown'),
+      voCountdownValue: document.getElementById('vo-countdown-value'),
+      btnVoCountdownClose: document.getElementById('btn-vo-countdown-close'),
+
+      // VO Instructions Countdown
+      voCountdownInstructions: document.getElementById('vo-countdown-instructions'),
+      voCountdownInstructionsValue: document.getElementById('vo-countdown-instructions-value'),
+      btnVoCountdownInstructionsClose: document.getElementById('btn-vo-countdown-instructions-close'),
+
+      // Carousel Petunjuk
+      btnCarouselPrev: document.getElementById('btn-carousel-prev'),
+      btnCarouselNext: document.getElementById('btn-carousel-next'),
+      carouselSlides: document.querySelectorAll('.carousel-slide'),
+      carouselDots: document.querySelectorAll('.carousel-dots .dot'),
+      carouselTrack: document.querySelector('.carousel-track'),
+
+      // Game Arena Dynamic Text
+      sessionTitle: document.getElementById('session-title'),
+      questionText: document.getElementById('question-text-dynamic'),
+      currentScore: document.getElementById('current-score'),
+      finalScore: document.getElementById('final-score'),
+      foodImage: document.getElementById('asset-food-image'),
+      optionButtons: document.querySelectorAll('.options-panel .btn-option[data-answer]'),
+
+      // Modal Feedback
+      modal: document.getElementById('quiz-modal'),
+      popupFeedbackImg: document.getElementById('asset-popup-feedback'),
+      modalTitle: document.getElementById('modal-title'),
+      modalText: document.getElementById('modal-text'),
+      btnModalClose: document.getElementById('btn-modal-close')
+    };
 
     // === INITIALIZATION & SOUND BINDING ===
     window.addEventListener('load', () => {
@@ -251,30 +1539,107 @@
       playOpeningVO();
     });
 
-   
+    const VO_FALLBACK_SECONDS = 17;
+    let voCountdownTimer = null;
 
     // === CAROUSEL LANDING PAGE (Tujuan Pembelajaran & Misi) ===
-   
-
+    let carouselIndex = 0;
+    let voOpeningDone = false;
     let voInstructionsDone = false;
-
-    const carouselController = new CarouselController({
-  slides: elements.carouselSlides,
-  track: elements.carouselTrack,
-  dots: elements.carouselDots,
-  btnPrev: elements.btnCarouselPrev,
-  btnNext: elements.btnCarouselNext,
-  onUpdate: updateStartState // Callback untuk tombol Start
-});
+    const carouselViewed = Array.from(elements.carouselSlides, (_, i) => i === 0);
 
     // Tombol Mulai aktif setelah semua carousel dibaca DAN VO opening selesai
-
+    function updateStartState() {
+      elements.btnStart.disabled = !(voOpeningDone && carouselViewed.every(v => v));
+    }
 
     // Tombol Lanjut (scene petunjuk) aktif setelah VO petunjuk selesai
     function updateContinueState() {
       elements.btnContinue.disabled = !voInstructionsDone;
     }
 
+    function updateCarousel() {
+      if (elements.carouselTrack) {
+        elements.carouselTrack.style.transform = `translateX(-${carouselIndex * 100}%)`;
+      }
+
+      elements.carouselSlides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === carouselIndex);
+      });
+      elements.carouselDots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === carouselIndex);
+      });
+
+      elements.btnCarouselPrev.disabled = carouselIndex === 0;
+      elements.btnCarouselNext.disabled = carouselIndex === elements.carouselSlides.length - 1;
+
+      updateStartState();
+    }
+
+    function resetCarousel() {
+      carouselIndex = 0;
+      for (let i = 0; i < carouselViewed.length; i++) carouselViewed[i] = (i === 0);
+      voOpeningDone = false;
+      updateCarousel();
+    }
+
+    function getVoDuration(audioEl) {
+      const dur = audioEl ? audioEl.duration : 0;
+      return Number.isFinite(dur) && dur > 0 ? dur : VO_FALLBACK_SECONDS;
+    }
+
+    function startVoCountdown({ audioEl, countdownEl, valueEl, onFinish }) {
+      stopVoCountdown();
+      const duration = getVoDuration(audioEl);
+      valueEl.innerText = Math.max(0, Math.ceil(duration));
+      countdownEl.classList.add('active');
+
+      voCountdownTimer = setInterval(() => {
+        const elapsed = audioEl ? audioEl.currentTime : 0;
+        valueEl.innerText = Math.max(0, Math.ceil(duration - elapsed));
+
+        if (elapsed >= duration) {
+          stopVoCountdown();
+          countdownEl.classList.remove('active');
+          if (typeof onFinish === 'function') onFinish();
+        }
+      }, 250);
+    }
+
+    function stopVoCountdown() {
+      if (voCountdownTimer) {
+        clearInterval(voCountdownTimer);
+        voCountdownTimer = null;
+      }
+    }
+
+    function playOpeningVO() {
+      elements.btnStart.disabled = true;
+      const vo = audioService.voOpening;
+      vo.src = "./assets/audio/vo_opening.mp3";
+      vo.currentTime = 0;
+      audioService.duckBgm();
+      vo.onended = () => audioService.restoreBgm();
+
+      function onPlaying() {
+        vo.removeEventListener('playing', onPlaying);
+        startVoCountdown({
+          audioEl: vo,
+          countdownEl: elements.voCountdown,
+          valueEl: elements.voCountdownValue,
+          onFinish: () => { voOpeningDone = true; updateStartState(); }
+        });
+      }
+      vo.addEventListener('playing', onPlaying);
+      vo.play().catch(() => { finishOpeningCountdown(); });
+    }
+
+    function finishOpeningCountdown() {
+      stopVoCountdown();
+      elements.voCountdown.classList.remove('active');
+      voOpeningDone = true;
+      updateStartState();
+    }
 
     function playInstructionsVO() {
       elements.btnContinue.disabled = true;
@@ -326,7 +1691,22 @@
       }
     }, { once: true });
 
-    
+    // === SCENE NAVIGATION ===
+    function switchScene(activeSceneKey, bgType = 'main') {
+      const scenes = [elements.sceneCover, elements.sceneInstructions, elements.sceneMain, elements.sceneOutro];
+      scenes.forEach(scene => scene.classList.remove('active'));
+
+      activeSceneKey.classList.add('active');
+
+      if (bgType === 'outro') {
+        elements.bgMain.classList.remove('active');
+        elements.bgOutro.classList.add('active');
+      } else {
+        elements.bgOutro.classList.remove('active');
+        elements.bgMain.classList.add('active');
+      }
+    }
+
     // === QUIZ ENGINE ===
     function loadQuizSession() {
       const currentQuiz = quizData[gameState.currentIndex];
@@ -526,13 +1906,26 @@
         finishInstructionsCountdown();
       });
 
+      elements.btnStart.addEventListener('click', () => {
+        audioService.stopVO(audioService.voOpening);
+        switchScene(elements.sceneInstructions, 'main');
+        playInstructionsVO();
+      });
+
       // Navigasi Carousel di Landing Page
       elements.btnCarouselNext.addEventListener('click', () => {
-        carouselController.next();
+        if (carouselIndex < elements.carouselSlides.length - 1) {
+          carouselIndex++;
+          carouselViewed[carouselIndex] = true;
+          updateCarousel();
+        }
       });
 
       elements.btnCarouselPrev.addEventListener('click', () => {
-        carouselController.prev();
+        if (carouselIndex > 0) {
+          carouselIndex--;
+          updateCarousel();
+        }
       });
 
       elements.btnContinue.addEventListener('click', () => {
@@ -548,25 +1941,18 @@
       elements.btnModalClose.addEventListener('click', closeModal);
 
       elements.btnRestart.addEventListener('click', () => {
-        // Hentikan Closing VO dan Victory SFX sebelum reset
-        audioService.stopVO(audioService.voClosing);
-        if (audioService.sfxVictory) {
-          audioService.sfxVictory.pause();
-          audioService.sfxVictory.currentTime = 0;
-        }
-
         gameState.resetState();
         switchScene(elements.sceneMain, 'main');
         if (!gameState.isMusicMuted) audioService.playBgm();
         loadQuizSession();
       });
 
-    elements.btnExit.addEventListener('click', () => {
-      gameState.resetState();
-      resetLandingFlow(); // Ini menggunakan fungsi reset baru kita
-      switchScene(elements.sceneCover, 'main');
-      playOpeningVO();
-    });
+  elements.btnExit.addEventListener('click', () => {
+    gameState.resetState();
+    resetCarousel();
+    switchScene(elements.sceneCover, 'main');
+    playOpeningVO();
+  });
 
       // Fullscreen Handler
       elements.btnToggleFullscreen.addEventListener('click', () => {
